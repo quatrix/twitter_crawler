@@ -7,29 +7,28 @@
 api_url(URL) ->
     "https://api.twitter.com/" ++ URL.
 
-call_twitter(Request) ->
-    {Method, Params} = Request,
-
+call_twitter_get(URL, Key) ->
     R = httpc:request(
-        Method,
-        Params,
+        get,
+        {api_url(URL), [{"Authorization", Key}]},
         [{ssl,[{verify,0}]}],
-        []
-    ),
+        []),
+    decode_response_body(R).
 
-    {ok, {{"HTTP/1.1", 200, "OK"}, _, Body}} = R,
+call_twitter_post(URL, Key, Type, Data) ->
+    R = httpc:request(
+        post,
+        {api_url(URL), [{"Authorization", Key}], Type, Data},
+        [{ssl,[{verify,0}]}],
+        []),
+    decode_response_body(R).
+
+decode_response_body(Response) ->
+    {ok, {{"HTTP/1.1", 200, "OK"}, _, Body}} = Response,
     jiffy:decode(Body).
 
-call_twitter(get, URL, Key) ->
-    call_twitter({get, {api_url(URL), [{"Authorization", Key}]}}).
-
-call_twitter(post, URL, Key, Type, Data) ->
-    call_twitter({post, {api_url(URL), [{"Authorization", Key}], Type, Data}}).
-
-
 get_bearer_token(APIKey, APISecret) ->
-    Res = call_twitter(
-        post,
+    Res = call_twitter_post(
         "oauth2/token",
         create_basic_key(APIKey, APISecret),
         "application/x-www-form-urlencoded;charset=UTF-8",
@@ -84,8 +83,7 @@ main(_) ->
 
     {APIKey, APISecret} = get_secret(),
 
-    Res = call_twitter(
-        get,
+    Res = call_twitter_get(
         "1.1/friends/list.json?count=10&screen_name=quatrix",
         get_bearer_token(APIKey, APISecret)
     ),
