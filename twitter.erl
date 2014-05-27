@@ -1,8 +1,6 @@
 #!/usr/bin/env escript
 
 -module(twitter_crawler).
--import(jiffy, [decode/1]).
--import(ej, [get/2]).
 
 api_url(URL) ->
     "https://api.twitter.com/" ++ URL.
@@ -35,7 +33,7 @@ get_bearer_token(APIKey, APISecret) ->
         "grant_type=client_credentials"
     ),
 
-    "Bearer " ++ binary_to_list(ej:get({"access_token"}, Res)).
+    "Bearer " ++ get_key("access_token", Res).
 
 
 replace_non_url_chars(String) ->
