@@ -1,4 +1,4 @@
-twitter_crawler
+Twitter_crawler
 ===============
 
 This should (if finished) fetch your twitter friends (people you follow) to
@@ -6,6 +6,20 @@ the 6th degree.
 
 Currently it's just the first thing I ever wrote in erlang, and it just
 a simple Twitter API you can play with.
+
+Installation
+=============
+
+I'm using the awesome [rebar](https://github.com/basho/rebar) so just type this:
+```
+rebar get-deps
+rebar compile
+```
+
+and then just run the script
+```
+./twitter.erl
+```
 
 Twitter API Key
 ===============
